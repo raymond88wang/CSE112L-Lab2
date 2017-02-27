@@ -15,7 +15,7 @@ module datapath(
 
 
     logic [31:0] PCNext, PCPlus4, PCPlus8;
-    logic [31:0] ExtImm, SrcA, SrcB, Result;
+    logic [31:0] ExtImm, SrcA, SrcB, Result, Rd;
     logic [3:0] RA1, RA2;
 
 
@@ -34,8 +34,9 @@ module datapath(
         SrcA, WriteData);
     mux2 #(32) resmux(ALUResult, ReadData, MemtoReg, Result);
     extend ext(Instr[23:0], ImmSrc, ExtImm);
+	shifter shifter(Instr[11:0], WriteData, Rd);
 
     // ALU logic
-    mux2 #(32) srcbmux(WriteData, ExtImm, ALUSrc, SrcB);
+    mux2 #(32) srcbmux(Rd, ExtImm, ALUSrc, SrcB);
     alu alu(SrcA, SrcB, ALUControl, ALUResult, ALUFlags);
 endmodule

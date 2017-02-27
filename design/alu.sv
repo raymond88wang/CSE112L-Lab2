@@ -124,7 +124,10 @@ module alu(
 				ALUResult = A | B;
 				zero = ~|ALUResult;
 			end
-      // 4'b1101 : // SHIFTS
+      4'b1101 : // SHIFTS
+	      begin
+		      ALUResult = B;
+	      end
       4'b1110 : // CLEAR
       begin
         ALUResult = A & ~B;
