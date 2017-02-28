@@ -1,142 +1,187 @@
-module alu(
-    input logic [31:0] A, B,
-    input logic [3:0] ALUControl,
-    output logic [31:0] ALUResult,
-	  output logic [3:0] ALUFlags
+module Rnlu(
+		input logic [31:0] Rn, Src2,
+		input logic [3:0] ALUControl,
+		output logic [31:0] Rd,
+		output logic [3:0] ALUFlags
     );
 
 
 	always_comb 
 	begin
-		//flags
+		//FLAGS
 		automatic logic overflow = 1'b0;
 		automatic logic c_out = 1'b0;
 		automatic logic negative = 1'b0;
 		automatic logic zero = 1'b0;
+		automatic logic result = 32'b0;
 		ALUFlags = 4'b0000;
-		
-		ALUResult = 32'b0;
+		Rd = 32'b0;
 		
 		case(ALUControl)
-      4'b0000 :   // AND
+		4'b0000 :   // AND
 			begin
-				ALUResult = A & B;
-				zero = ~|ALUResult;
+				Rd = Rn & Src2;
+				zero = ~|Rd;
+				negative = Rd[31];
 			end
-      4'b0001 :   // XOR
+		  
+		4'b0001 :   // XOR
 			begin
-			  ALUResult = A ^ B;
-				zero = ^ALUResult;
+				Rd = Rn ^ Src2;
+				zero = ~|Rd;
+				negative = Rd[31];
 			end
-      4'b0010 :   // SUB
+		  
+		4'b0010 :   // SUB
 			begin
-				{c_out,ALUResult} = A - B;
-				if (A[31] & ~B[31] & ~ALUResult[31])
+				{c_out,Rd} = Rn - Src2;
+				if (Rn[31] & ~Src2[31] & ~Rd[31])
 					overflow = 1'b1;
-				else if (~A[31] & B[31] & ALUResult[31])
+				else if (~Rn[31] & Src2[31] & Rd[31])
 					overflow = 1'b1;
 				else
 					overflow = 1'b0;
-				zero = ~|ALUResult;
-				negative = ALUResult[31];
-      end
-      4'b0011 : // REVERSE SUB
-      begin
-				{c_out,ALUResult} = B - A;
-				if (B[31] & ~A[31] & ~ALUResult[31])
-					overflow = 1'b1;
-				else if (~B[31] & A[31] & ALUResult[31])
-					overflow = 1'b1;
-				else
-					overflow = 1'b0;
-				zero = ~|ALUResult;
-				negative = ALUResult[31];
-      end
-			4'b0100 :   // ADD
-			begin
-				{c_out,ALUResult} = A + B;
-				if (A[31] & B[31] & ~ALUResult[31])
-					overflow = 1'b1;
-				else if (~A[31] & ~B[31] & ALUResult[31])
-					overflow = 1'b1;
-				else
-					overflow = 1'b0;
-				zero = ~|ALUResult;
-				negative = ALUResult[31];
+				zero = ~|Rd;
+				negative = Rd[31];
 			end
-      4'b0101 :  // ADD WITH CARRY
-      begin
-        c_out = A + B;
-        {c_out, ALUResult} = A + B + c_out;
-        if (A[31] & B[31] & c_out & ~ALUResult[31])
-          overflow = 1'b1;
-        else if (~A[31] & ~[31] & ~c_out & ALUResult[31])
-          overflow = 1'b1;
-        else
-          overflow = 1'b0;
-        zero = ~|ALUResult;
-        negative = ALUResult[31];
-      end
-      4'b0110 :  // SUB WITH CARRY
-      begin
-        c_out = A - B;
-        {c_out, ALUResult} = A - B - c_out;
-        if (A[31] & ~B[31] & ~c_out & ~ALUResult[31])
+		
+		4'b0011 : // REVERSE SUB
+			begin
+					{c_out,Rd} = Src2 - Rn;
+					if (Src2[31] & ~Rn[31] & ~Rd[31])
+						overflow = 1'b1;
+					else if (~Src2[31] & Rn[31] & Rd[31])
+						overflow = 1'b1;
+					else
+						overflow = 1'b0;
+				zero = ~|Rd;
+				negative = Rd[31];
+			 end
+		
+		4'b0100 :   // ADD
+			begin
+				{c_out,Rd} = Rn + Src2;
+				if (Rn[31] & Src2[31] & ~Rd[31])
 					overflow = 1'b1;
-				else if (~A[31] & B[31] & c_out & ALUResult[31])
+				else if (~Rn[31] & ~Src2[31] & Rd[31])
 					overflow = 1'b1;
 				else
 					overflow = 1'b0;
-				zero = ~|ALUResult;
-				negative = ALUResult[31];
-      end
-      4'b0111 :  // REVERSE SUB WITH CARRY
-      begin
-        c_out = B - A;
-        {c_out, ALUResult} = B - A - c_out;
-        if (B[31] & ~A[31] & ~c_out & ~ALUResult[31])
+				zero = ~|Rd;
+				negative = Rd[31];
+			end
+		
+		4'b0101 :  // ADD WITH CARRY
+			begin
+				c_out = Rn + Src2;
+				{c_out, Rd} = Rn + Src2 + c_out;
+				if (Rn[31] & Src2[31] & c_out & ~Rd[31])
 					overflow = 1'b1;
-				else if (~B[31] & A[31] & c_out & ALUResult[31])
+				else if (~Rn[31] & ~Src2[31] & ~c_out & Rd[31])
 					overflow = 1'b1;
 				else
 					overflow = 1'b0;
-				zero = ~|ALUResult;
-				negative = ALUResult[31];
-      end
-      4'b1000 :  // TEST
-      begin
-        {negative, zero, c_out, overflow} = A & B;
-      end
-      4'b1001 :  // TEST EQUIVALENCE
-      begin
-        {negative, zero, c_out, overflow} = A ^ B;
-      end
-			4'b1010 :  // COMP
-			begin
-        {negative, zero, c_out, overflow} = A - B;
+					zero = ~|Rd;
+					negative = Rd[31];
 			end
-      4'b1011 : // COMPARE NEGATIVE
-      begin
-        {negative, zero, c_out, overflow} = A + B;
-      end
-			4'b1100 :   // OR
+		
+		4'b0110 :  // SUB WITH CARRY
 			begin
-				ALUResult = A | B;
-				zero = ~|ALUResult;
+				c_out = Rn - Src2;
+				{c_out, Rd} = Rn - Src2 - c_out;
+				if (Rn[31] & ~Src2[31] & ~c_out & ~Rd[31])
+					overflow = 1'b1;
+				else if (~Rn[31] & Src2[31] & c_out & Rd[31])
+					overflow = 1'b1;
+				else
+					overflow = 1'b0;
+				zero = ~|Rd;
+				negative = Rd[31];
 			end
-      4'b1101 : // SHIFTS
-	      begin
-		      ALUResult = B;
-	      end
-      4'b1110 : // CLEAR
-      begin
-        ALUResult = A & ~B;
-        {negative, zero} = A & ~B;
-      end
-			4'b1111 :   // NOT
+			
+		4'b0111 :  // REVERSE SUB WITH CARRY
 			begin
-				ALUResult = ~A;
-      end
+				c_out = Src2 - Rn;
+				{c_out, Rd} = Src2 - Rn - c_out;
+				if (Src2[31] & ~Rn[31] & ~c_out & ~Rd[31])
+					overflow = 1'b1;
+				else if (~Src2[31] & Rn[31] & c_out & Rd[31])
+					overflow = 1'b1;
+				else
+					overflow = 1'b0;
+				zero = ~|Rd;
+				negative = Rd[31];
+			end
+		
+		4'b1000 :  // TEST
+			begin
+				result = Rn & Src2;
+				zero = ~|result;
+				negative = result[31];
+			end
+		
+		4'b1001 :  // TEST EQUIVALENCE
+			begin
+				result = Rn ^ Src2;
+				zero = ~|result;
+				negative = result[31];
+			end
+
+		4'b1010 :  // COMP
+			begin
+				begin
+				{c_out,result} = Rn - Src2;
+				if (Rn[31] & ~Src2[31] & ~result[31])
+					overflow = 1'b1;
+				else if (~Rn[31] & Src2[31] & result[31])
+					overflow = 1'b1;
+				else
+					overflow = 1'b0;
+				zero = ~|result;
+				negative = result[31];
+			end
+			
+		4'b1011 : // COMPARE NEGATIVE
+			begin
+				{c_out,result} = Rn + Src2;
+				if (Rn[31] & Src2[31] & ~result[31])
+					overflow = 1'b1;
+				else if (~Rn[31] & ~Src2[31] & result[31])
+					overflow = 1'b1;
+				else
+					overflow = 1'b0;
+				zero = ~|result;
+				negative = result[31];
+			end
+			
+		4'b1100 :   // OR
+			begin
+				Rd = Rn | Src2;
+				zero = ~|Rd;
+				negative = Rd[31];
+			end
+		
+		4'b1101 : // SHIFTS
+			begin
+				case
+				Rd = Src2;
+				zero = ~|Rd;
+				negative = Rd[31];
+			end
+		
+		4'b1110 : // CLEAR
+			begin
+				Rd = Rn & ~Src2;
+				zero = ~|Rd;
+				negative = Rd[31];
+			end
+		
+		4'b1111 :   // NOT
+			begin
+				Rd = ~Rn;
+				zero = ~|Rd;
+				negative = Rd[31];
+			end
 		endcase
 		ALUFlags = {negative, zero, c_out, overflow};
 	end
