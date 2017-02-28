@@ -5,6 +5,7 @@ module regshift(
 	output logic [31:0] Rd
 );
     
+	always_comb
 	begin
 	    Rd = 32'b0;
 		automatic logic c_flag = 1'b0;
