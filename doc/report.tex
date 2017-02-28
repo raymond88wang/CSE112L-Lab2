@@ -1,0 +1,96 @@
+\documentclass{article}
+\usepackage{enumitem}
+\usepackage{listings}
+\usepackage{amsfonts}
+\usepackage{latexsym}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{paralist}
+\usepackage{tikz-timing}
+
+\lstdefinelanguage{VHDL}{
+  morekeywords={
+    library,use,all,ENTITY,IS,PORT,IN,OUT,end,architecture,of,
+    begin,and, ARCHITECTURE, IF, THEN, SIGNAL,END, PROCESS
+  },
+  morecomment=[l]--
+}
+
+\usepackage{xcolor}
+\colorlet{keyword}{blue!100!black!80}
+\colorlet{comment}{green!90!black!90}
+\lstdefinestyle{vhdl}{
+  language     = VHDL,
+  basicstyle   = \ttfamily\scriptsize,
+  keywordstyle = \color{keyword}\bfseries\ttfamily,
+  commentstyle = \color{comment}\ttfamily,	
+  tabsize=1
+}
+
+\renewcommand{\lstlistingname}{Code}
+
+% Default margins are too wide all the way around. I reset them here
+\setlength{\topmargin}{-.5in}
+\setlength{\textheight}{9in}
+\setlength{\oddsidemargin}{.125in}
+\setlength{\textwidth}{6.25in}
+
+
+%\let\oldenumerate\enumerate
+%\renewcommand{\enumerate}{
+  %\oldenumerate
+  %\setlength{\itemsep}{1pt}
+  %\setlength{\parskip}{0pt}
+  %\setlength{\parsep}{0pt}
+%}
+
+
+\begin{document}
+\title{EECS112L Organization of Digital Computers Lab}
+\author{\textbf{Lab 2} \textbf{Single-cycle ARM Datapath and Control - Complete} \\ \\
+Group name: Three Musketeers \\ \\ Group ID: 118 \\ \\ Student name: \\ Raymond Wang \\ Jared Lim\\ Heyang Chen \\ \\ Student ID: \\17769107~\\31633414~\\55554499~\\ \\ 
+EECS Department\\ Henry Samueli School of Engineering \\ University of California, Irvine \\ \\
+{February, 28, 2017}} 
+
+
+\date{}
+\maketitle
+
+\newpage
+
+\section{Description of this Lab}
+
+In this lab, we learned and worked on designing a single cycle ARM processor, in which we mainly focused on designing the 32-bit ALU in the datapath of the ARM processor. In the ALU we designed, we have two 32-bit source input A and B and a 2-bit input ALU control unit. The 2-bit ALU control unit helps to determine which instruction, out of Add, Sub, And, Or, are we using. Other than that, we also have a 32-bit output result and a 4-big flags containing overflow, carry, negative and zero. For the testbench, we use the one given by TA from the course website.
+
+\section{Simulation Waveform}
+Waveform 1:
+\newline
+\newline
+
+Waveform 2:
+\newline
+\newline
+
+Waveform 3:
+\newline
+\newline
+
+
+
+\section{Examine the Correctness}
+
+1. According to the result after we called the command to simulate the design, it gives us a "Simulation succeeded" as shown in the screenshot below. Therefore, it means when the memwrite is 1, 7 gets written to address 0x64 as we expected.
+\newline
+
+2. In the second and third waveform, it shows the ALU result of given input sources A and B and the operation code. Here the source A and B are 28 and 30 and the operation code is 00 which is add, the ALU result is correct as it is 58. It also shows the ALU flags works in figure 3 where the flags is in order of negative, zero, carry, and overflow.
+
+\section{Tasks and Contributions of Each Group Member}
+
+Raymond Wang: Team leader; Implement, test and debug on Systemverilog code; Draw block diagram.
+\newline
+Jared Lim: Implement, test and debug on Systemverilog code.
+\newline
+Heyang Chen: Implement, test and debug on Systemverilog code; Write lab report.
+
+
+\end{document}
