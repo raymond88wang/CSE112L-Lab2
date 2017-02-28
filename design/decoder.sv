@@ -1,6 +1,9 @@
-module decoder(input logic [1:0] Op,
+module decoder(
+	input logic [1:0] Op,
     input logic [5:0] Funct,
     input logic [3:0] Rd,
+	input logic [1:0] Op2,
+	output logic [3:0] be,
     output logic [1:0] FlagW,
     output logic PCS, RegW, MemW,
     output logic MemtoReg, ALUSrc,
@@ -13,13 +16,59 @@ module decoder(input logic [1:0] Op,
     always_comb
         casex(Op)
             // Data-processing immediate
-            2'b00: if (Funct[5]) controls = 10'b0000101001;
+            2'b00: 
+			if (Funct[5]) 
+				case(Op2[1:0])
+				2'b01: 
+					begin
+					// LDRH
+						controls = 10'b0011111000;
+						be = 4'b0011;
+					end
+				2'b10:
+					begin
+					// LDRSB
+						controls = 10'b0000111000;
+						be = 4'b0001;
+					end
+				2'b11:
+					begin
+						controls = 10'b0011111000;
+				default: controls = 10'bx;
+				endcase	
             // Data-processing register
-            else controls = 10'b0000001001;
-            // LDR
-            2'b01: if (Funct[0]) controls = 10'b0001111000;
-            // STR
-            else controls = 10'b1001110100;
+            else 
+				if(Op2[1:0] == 2'b01)
+				{
+				// STRH
+					controls = 10'b1001110100;
+					be = 4'b0011;
+				}
+				else
+					controls = 10'b0000001001;
+			
+            2'b01: 
+				if (Funct[0])
+					if(Funct[2]) 
+					// LDR
+						controls = 10'b0001111000;
+					else
+					{
+					// LDRB
+						controls = 10'b0001111000;
+						be = 4'b0001;
+					}
+				else 
+					if(Funct[2])
+					{
+					// STRB
+						controls = 10'b1001110100;
+						be = 4'b0001;
+					}
+					else
+					// STR
+						controls = 10'b1001110100;
+				
             // B and BL
             2'b10: controls = 10'b0110100010;
             // Unimplemented

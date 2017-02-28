@@ -3,6 +3,7 @@ module arm(
     output logic [31:0] PC,
     input logic [31:0] Instr,
     output logic MemWrite,
+	output logic [3:0] be;
     output logic [31:0] ALUResult, WriteData,
     input logic [31:0] ReadData);
 
@@ -13,12 +14,12 @@ module arm(
     controller c(clk, reset, Instr[31:12], ALUFlags,
         RegSrc, RegWrite, ImmSrc,
         ALUSrc, ALUControl,
-        MemWrite, MemtoReg, PCSrc);
+        MemWrite, MemtoReg, PCSrc, be);
     datapath dp(clk, reset,
         RegSrc, RegWrite, ImmSrc,
         ALUSrc, ALUControl,
-        MemtoReg, PCSrc,
-        ALUFlags, PC, Instr,
+        MemtoReg, PCSrc, MemWrite,
+        be, ALUFlags, PC, Instr,
         ALUResult, WriteData, ReadData);
 
 endmodule

@@ -1,4 +1,3 @@
-
 module tb_top();
     logic clk;
     logic reset;

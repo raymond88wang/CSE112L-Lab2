@@ -7,6 +7,8 @@ module datapath(
     input logic [1:0] ALUControl,
     input logic MemtoReg,
     input logic PCSrc,
+	input logic MemWrite,
+	input logic [3:0] be,
     output logic [3:0] ALUFlags,
     output logic [31:0] PC,
     input logic [31:0] Instr,
@@ -40,4 +42,5 @@ module datapath(
     // ALU logic
     mux2 #(32) srcbmux(Rd, ExtImm, ALUSrc, SrcB);
     alu alu(SrcA, SrcB, ALUControl, ALUResult, ALUFlags);
+	extend ext(Instr[6], ReadData[16:0], ImmSrc, ReadData);
 endmodule
