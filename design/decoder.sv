@@ -6,10 +6,10 @@ module decoder(
 	output logic [3:0] be,
     output logic [1:0] FlagW,
     output logic PCS, RegW, MemW,
-    output logic MemtoReg, ALUSrc,
+    output logic MemtoReg, ALUSrc, ShifterSrc,
     output logic [1:0] ImmSrc, RegSrc, ALUControl);
 
-    logic [9:0] controls;
+    logic [10:0] controls;
     logic Branch, ALUOp;
     
     // Main Decoder
@@ -70,13 +70,13 @@ module decoder(
 						controls = 10'b1001110100;
 				
             // B and BL
-            2'b10: controls = 10'b0110100010;
+            2'b10: controls = 11'b01101000100;
             // Unimplemented
-            default: controls = 10'bx;
+            default: controls = 11'bx;
         endcase
     
     assign {RegSrc, ImmSrc, ALUSrc, MemtoReg,
-        RegW, MemW, Branch, ALUOp} = controls;
+        RegW, MemW, Branch, ALUOp, ShiftSrc} = controls;
     
     // ALU Decoder
     always_comb
