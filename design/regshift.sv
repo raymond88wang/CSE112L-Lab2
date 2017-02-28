@@ -1,10 +1,11 @@
 module regshift(
-    input logic [3:0] Rs,
+    input logic [31:0] Rs,
 	input logic [1:0] shift_control,
 	input logic [31:0] Rm,
 	output logic [31:0] Rd
 );
     
+	always_comb
 	begin
 	    Rd = 32'b0;
 		automatic logic c_flag = 1'b0;
