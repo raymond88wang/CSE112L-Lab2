@@ -20,7 +20,7 @@ module decoder(input logic [1:0] Op,
             2'b01: if (Funct[0]) controls = 10'b0001111000;
             // STR
             else controls = 10'b1001110100;
-            // B
+            // B and BL
             2'b10: controls = 10'b0110100010;
             // Unimplemented
             default: controls = 10'bx;

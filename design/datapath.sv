@@ -15,7 +15,7 @@ module datapath(
 
 
     logic [31:0] PCNext, PCPlus4, PCPlus8;
-    logic [31:0] ExtImm, SrcA, SrcB, Result, Rd;
+    logic [31:0] ExtImm, SrcA, SrcB, Result, Rd, PCPlus4toR14;
     logic [3:0] RA1, RA2;
 
 
@@ -29,8 +29,9 @@ module datapath(
     // register file logic
     mux2 #(4) ra1mux(Instr[19:16], 4'b1111, RegSrc[0], RA1);
     mux2 #(4) ra2mux(Instr[3:0], Instr[15:12], RegSrc[1], RA2);
+	mux4 #(32) r14mux1 (32'bx, 32'bx, 32'bx, PCPlus4, Instr[25:24], PCPlus4toR14);
     regfile rf(clk, RegWrite, RA1, RA2,
-        Instr[15:12], Result, PCPlus8,
+        Instr[15:12], Result, PCPlus8, toR14,
         SrcA, WriteData);
     mux2 #(32) resmux(ALUResult, ReadData, MemtoReg, Result);
     extend ext(Instr[23:0], ImmSrc, ExtImm);
