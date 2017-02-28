@@ -7,16 +7,16 @@ module arm(
     input logic [31:0] ReadData);
 
     logic [3:0] ALUFlags;
-    logic RegWrite, ALUSrc, MemtoReg, PCSrc;
+    logic RegWrite, ALUSrc, MemtoReg, PCSrc, ShifterSrc;
     logic [1:0] RegSrc, ImmSrc, ALUControl;
 
     controller c(clk, reset, Instr[31:12], ALUFlags,
         RegSrc, RegWrite, ImmSrc,
-        ALUSrc, ALUControl,
+        ALUSrc, ShifterSrc, ALUControl,
         MemWrite, MemtoReg, PCSrc);
     datapath dp(clk, reset,
         RegSrc, RegWrite, ImmSrc,
-        ALUSrc, ALUControl,
+        ALUSrc, ShifterSrc, ALUControl,
         MemtoReg, PCSrc,
         ALUFlags, PC, Instr,
         ALUResult, WriteData, ReadData);

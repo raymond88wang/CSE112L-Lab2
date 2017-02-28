@@ -4,6 +4,7 @@ module datapath(
     input logic RegWrite,
     input logic [1:0] ImmSrc,
     input logic ALUSrc,
+	input logic ShifterSrc,
     input logic [1:0] ALUControl,
     input logic MemtoReg,
     input logic PCSrc,
@@ -15,8 +16,9 @@ module datapath(
 
 
     logic [31:0] PCNext, PCPlus4, PCPlus8;
-    logic [31:0] ExtImm, SrcA, SrcB, Result, Rd, PCPlus4toR14;
-    logic [3:0] RA1, RA2;
+    logic [31:0] ExtImm, SrcA, SrcB, Result, Rd, PCPlus4toR14, Rs;
+    logic [3:0] RA1, RA2, ShifterFlags, AFlags;
+	
 
 
     // next PC logic
@@ -31,13 +33,14 @@ module datapath(
     mux2 #(4) ra2mux(Instr[3:0], Instr[15:12], RegSrc[1], RA2);
 	mux4 #(32) r14mux1 (32'bx, 32'bx, 32'bx, PCPlus4, Instr[25:24], PCPlus4toR14);
     regfile rf(clk, RegWrite, RA1, RA2,
-        Instr[15:12], Result, PCPlus8, PCPlus4toR14,
-        SrcA, WriteData);
+        Instr[15:12], Instr[11:8], Result, PCPlus8, PCPlus4toR14,
+        SrcA, WriteData, Rs);
     mux2 #(32) resmux(ALUResult, ReadData, MemtoReg, Result);
     extend ext(Instr[23:0], ImmSrc, ExtImm);
-	shifter shifter(Instr[25:0], WriteData, Rd);
+	shifter shifter(Instr[25:0], WriteData, Rs, Rd, ShifterFlags);
 
     // ALU logic
     mux2 #(32) srcbmux(Rd, ExtImm, ALUSrc, SrcB);
-    alu alu(SrcA, SrcB, ALUControl, ALUResult, ALUFlags);
+    alu alu(SrcA, SrcB, ALUControl, ALUResult, AFlags);
+	mux2 #(4) flagsmux(ShifterFlags, AFlags, ShifterSrc, ALUFlags);
 endmodule

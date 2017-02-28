@@ -1,4 +1,4 @@
-module Rnlu(
+module alu(
 		input logic [31:0] Rn, Src2,
 		input logic [3:0] ALUControl,
 		output logic [31:0] Rd,
