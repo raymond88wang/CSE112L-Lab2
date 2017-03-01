@@ -163,7 +163,6 @@ module alu(
 		
 		4'b1101 : // SHIFTS
 			begin
-				case
 				Rd = Src2;
 				zero = ~|Rd;
 				negative = Rd[31];

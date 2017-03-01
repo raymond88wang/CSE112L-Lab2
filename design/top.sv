@@ -2,7 +2,7 @@ module top(
     input  logic clk, reset,
     output logic [31:0] DataAdr,
     output logic [31:0] WriteData,
-    output logic MemWrite,
+    output logic MemWrite
     );
 
     logic [31:0] PC, Instr, ReadData;

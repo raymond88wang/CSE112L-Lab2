@@ -44,6 +44,6 @@ module datapath(
     // ALU logic
     mux2 #(32) srcbmux(Rd, ExtImm, ALUSrc, SrcB);
     alu alu(SrcA, SrcB, ALUControl, ALUResult, AFlags);
-	extend ext(Instr[6], ReadData[16:0], ImmSrc, ReadData);
+	extend ext2(Instr[6], ReadData[16:0], ImmSrc, ReadData);
 	mux2 #(4) flagsmux(ShifterFlags, AFlags, ShifterSrc, ALUFlags);
 endmodule

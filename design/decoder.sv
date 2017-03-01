@@ -22,52 +22,81 @@ module decoder(
 				2'b01: 
 					begin
 					// LDRH
-						controls = 10'b0011111000;
-						be = 4'b0011;
+					    if (Funct[4:1] == 4'b1101)
+						begin
+						    controls = 11'b00111110001;
+						    be = 4'b0011;
+						end
+						else
+						begin
+						    controls = 11'b00111110000;
+						    be = 4'b0011;
+						end
 					end
 				2'b10:
 					begin
 					// LDRSB
-						controls = 10'b0000111000;
-						be = 4'b0001;
+					    if (Funct[4:1] == 4'b1101)
+						begin
+						    controls = 11'b00001110001;
+						    be = 4'b0001;
+						end
+						else
+						begin
+						    controls = 11'b00001110000;
+						    be = 4'b0001;
+						end
 					end
 				2'b11:
 					begin
-						controls = 10'b0011111000;
-				default: controls = 10'bx;
+					    if (Funct[4:1] == 4'b1101)
+						    controls = 11'b00111110001;
+						else
+						    controls = 11'b00111110000;
+					end
 				endcase	
             // Data-processing register
             else 
 				if(Op2[1:0] == 2'b01)
-				{
 				// STRH
-					controls = 10'b1001110100;
-					be = 4'b0011;
-				}
+					begin
+					if (Funct[4:1] == 4'b1101)
+					    begin 
+					    controls = 11'b10011101001;
+					    be = 4'b0011;
+						end
+					else
+					    begin
+						controls = 11'b10011101000;
+					    be = 4'b0011;
+						end
+					end
 				else
-					controls = 10'b0000001001;
-			
+				    if (Funct[4:1] == 4'b1101)
+					    controls = 11'b00000010011;
+					else
+					    controls = 11'b00000010010;
             2'b01: 
 				if (Funct[0])
 					if(Funct[2]) 
 					// LDR
-						controls = 10'b0001111000;
+						controls = 11'b00011110000;
 					else
-					{
 					// LDRB
-						controls = 10'b0001111000;
+					    begin
+						controls = 11'b00011110000;
 						be = 4'b0001;
-					}
+						end
 				else 
 					if(Funct[2])
-					{
 					// STRB
-						controls = 10'b1001110100;
+					    begin
+						controls = 11'b10011101000;
 						be = 4'b0001;
-					}
+						end
 					else
 					// STR
-						controls = 10'b1001110100;
+						controls = 11'b10011101000;
 				
             // B and BL
             2'b10: controls = 11'b01101000100;
@@ -76,7 +105,7 @@ module decoder(
         endcase
     
     assign {RegSrc, ImmSrc, ALUSrc, MemtoReg,
-        RegW, MemW, Branch, ALUOp, ShiftSrc} = controls;
+        RegW, MemW, Branch, ALUOp, ShifterSrc} = controls;
     
     // ALU Decoder
     always_comb
