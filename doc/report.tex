@@ -60,37 +60,27 @@ EECS Department\\ Henry Samueli School of Engineering \\ University of Californi
 
 \section{Description of this Lab}
 
-In this lab, we learned and worked on designing a single cycle ARM processor, in which we mainly focused on designing the 32-bit ALU in the datapath of the ARM processor. In the ALU we designed, we have two 32-bit source input A and B and a 2-bit input ALU control unit. The 2-bit ALU control unit helps to determine which instruction, out of Add, Sub, And, Or, are we using. Other than that, we also have a 32-bit output result and a 4-big flags containing overflow, carry, negative and zero. For the testbench, we use the one given by TA from the course website.
+In this lab, We started from the basis of last lab and adding more features including data processing instructions, branch and link, and byte-size store/load instruction.
+
+\section{Block Diagram}
+
+\includegraphics[width=1.0\textwidth]{SingleCycleProcessor.pdf}
+
+\section{Design Architecture}
+
+In designing this lab, we followed ideas mainly from supplement reference book and ARM manual provided by TA. First of all, we designed branch and link. As shown in the block diagram, we designed a new module of 4-way multiplexer and have PCPlus4 input this 4-way multiplexer and then goes into Register 14 on register file. 
+\newline
+Then for the immediate-shifted and register-shifted register instruction. We actually create a new shift register, get the shift done there and then push to multiplexer before ALU. In this way, it won't make ALU become confusing and having a whole lot of new input/output in ALU. We first having Instr[11:8] input into regfile as Ra4 and get the Rs by given Rs = R15[Ra4] which is the register shift amount. Then Instr[25] comes into shift as I bit deciding whether it is Mov or the rest shift operation. Then Instr[4] decide whether it is a immediate shift or register shift. Since we have shift done before going into ALU, we also have shifter output ShifterFlags similar to ALUFlags. Then adding a ShifterSrc to decoder in order to decide in the multiplexer on which flags we are using to input into condlogic as ALUFlags.
+\newline
+For ALU, we have changed based on the design of last time and making operation code from 2 bits to 4 bits in order to support all the data-processing instructions. All of the design follows the table given in lab description.
+\newline
+For store byte, store half, load byte and load half, we made changes in decoder as well as controller. We added a 4 bit Byte-enable(be) and output that with different value according to different situation generating by operation code, operation code2, Funct[5] and Funct[2].
 
 \section{Simulation Waveform}
-Waveform 1:
-\newline
-\newline
-
-Waveform 2:
-\newline
-\newline
-
-Waveform 3:
-\newline
-\newline
-
 
 
 \section{Examine the Correctness}
 
-1. According to the result after we called the command to simulate the design, it gives us a "Simulation succeeded" as shown in the screenshot below. Therefore, it means when the memwrite is 1, 7 gets written to address 0x64 as we expected.
-\newline
-
-2. In the second and third waveform, it shows the ALU result of given input sources A and B and the operation code. Here the source A and B are 28 and 30 and the operation code is 00 which is add, the ALU result is correct as it is 58. It also shows the ALU flags works in figure 3 where the flags is in order of negative, zero, carry, and overflow.
-
-\section{Tasks and Contributions of Each Group Member}
-
-Raymond Wang: Team leader; Implement, test and debug on Systemverilog code; Draw block diagram.
-\newline
-Jared Lim: Implement, test and debug on Systemverilog code.
-\newline
-Heyang Chen: Implement, test and debug on Systemverilog code; Write lab report.
 
 
 \end{document}
