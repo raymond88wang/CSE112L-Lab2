@@ -47,13 +47,13 @@ module alu(
 		
 		4'b0011 : // REVERSE SUB
 			begin
-					{c_out,Rd} = Src2 - Rn;
-					if (Src2[31] & ~Rn[31] & ~Rd[31])
-						overflow = 1'b1;
-					else if (~Src2[31] & Rn[31] & Rd[31])
-						overflow = 1'b1;
-					else
-						overflow = 1'b0;
+				{c_out,Rd} = Src2 - Rn;
+				if (Src2[31] & ~Rn[31] & ~Rd[31])
+					overflow = 1'b1;
+				else if (~Src2[31] & Rn[31] & Rd[31])
+					overflow = 1'b1;
+				else
+					overflow = 1'b0;
 				zero = ~|Rd;
 				negative = Rd[31];
 			 end
@@ -129,7 +129,6 @@ module alu(
 
 		4'b1010 :  // COMP
 			begin
-				begin
 				{c_out,result} = Rn - Src2;
 				if (Rn[31] & ~Src2[31] & ~result[31])
 					overflow = 1'b1;

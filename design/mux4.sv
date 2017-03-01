@@ -22,4 +22,6 @@ module mux4
 			begin
 				assign y = d3;
 			end
+		default: assign y = 8'bx;
+	endcase
 endmodule
