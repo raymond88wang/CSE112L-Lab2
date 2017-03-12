@@ -13,7 +13,7 @@ module alu(
 		automatic logic c_out = 1'b0;
 		automatic logic negative = 1'b0;
 		automatic logic zero = 1'b0;
-		automatic logic result = 32'b0;
+		//automatic logic result = 32'b0;
 		ALUFlags = 4'b0000;
 		Rd = 32'b0;
 		
@@ -47,13 +47,13 @@ module alu(
 		
 		4'b0011 : // REVERSE SUB
 			begin
-				{c_out,Rd} = Src2 - Rn;
-				if (Src2[31] & ~Rn[31] & ~Rd[31])
-					overflow = 1'b1;
-				else if (~Src2[31] & Rn[31] & Rd[31])
-					overflow = 1'b1;
-				else
-					overflow = 1'b0;
+					{c_out,Rd} = Src2 - Rn;
+					if (Src2[31] & ~Rn[31] & ~Rd[31])
+						overflow = 1'b1;
+					else if (~Src2[31] & Rn[31] & Rd[31])
+						overflow = 1'b1;
+					else
+						overflow = 1'b0;
 				zero = ~|Rd;
 				negative = Rd[31];
 			 end
@@ -115,42 +115,46 @@ module alu(
 		
 		4'b1000 :  // TEST
 			begin
-				result = Rn & Src2;
-				zero = ~|result;
-				negative = result[31];
+				Rd = Rn & Src2;
+				zero = ~|Rd;
+				negative = Rd[31];
+				Rd = 32'b0;
 			end
 		
 		4'b1001 :  // TEST EQUIVALENCE
 			begin
-				result = Rn ^ Src2;
-				zero = ~|result;
-				negative = result[31];
+				Rd = Rn ^ Src2;
+				zero = ~|Rd;
+				negative = Rd[31];
+				Rd = 32'b0;
 			end
 
 		4'b1010 :  // COMP
 			begin
-				{c_out,result} = Rn - Src2;
-				if (Rn[31] & ~Src2[31] & ~result[31])
+				{c_out,Rd} = Rn - Src2;
+				if (Rn[31] & ~Src2[31] & ~Rd[31])
 					overflow = 1'b1;
-				else if (~Rn[31] & Src2[31] & result[31])
+				else if (~Rn[31] & Src2[31] & Rd[31])
 					overflow = 1'b1;
 				else
 					overflow = 1'b0;
-				zero = ~|result;
-				negative = result[31];
+				zero = ~|Rd;
+				negative = Rd[31];
+				Rd = 32'b0;
 			end
 			
 		4'b1011 : // COMPARE NEGATIVE
 			begin
-				{c_out,result} = Rn + Src2;
-				if (Rn[31] & Src2[31] & ~result[31])
+				{c_out,Rd} = Rn + Src2;
+				if (Rn[31] & Src2[31] & ~Rd[31])
 					overflow = 1'b1;
-				else if (~Rn[31] & ~Src2[31] & result[31])
+				else if (~Rn[31] & ~Src2[31] & Rd[31])
 					overflow = 1'b1;
 				else
 					overflow = 1'b0;
-				zero = ~|result;
-				negative = result[31];
+				zero = ~|Rd;
+				negative = Rd[31];
+				Rd = 32'b0;
 			end
 			
 		4'b1100 :   // OR
