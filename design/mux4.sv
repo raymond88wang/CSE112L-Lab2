@@ -4,8 +4,8 @@ module mux4
     input logic [1:0] s,
     output logic [WIDTH-1:0] y);
 
-	
-	case (s)
+	always_comb
+	case(s)
 		2'b00:
 			begin
 				assign y = d0;
@@ -22,6 +22,5 @@ module mux4
 			begin
 				assign y = d3;
 			end
-		default: assign y = 8'bx;
 	endcase
 endmodule
