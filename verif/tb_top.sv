@@ -1,7 +1,9 @@
+
 module tb_top();
     logic clk;
     logic reset;
-    logic [31:0] WriteData, DataAdr;
+    logic [31:0] DataAdr;
+    logic [31:0] WriteData;
     logic MemWrite;
 
 
@@ -26,16 +28,15 @@ module tb_top();
     always @(negedge clk)
     begin
         if(MemWrite) begin
-            if(DataAdr === 252 &  WriteData === 22) 
+            if(DataAdr === 100 & WriteData === 7) 
             begin
                 $display("Simulation succeeded");
                 $stop;
             end 
-            else //if (DataAdr !== 96) 
+            else if (DataAdr !== 96) 
             begin
                 $display("Simulation failed");
-                $display("your score is %d out of 22", WriteData);
-		$stop;
+                $stop;
             end
         end
     end
