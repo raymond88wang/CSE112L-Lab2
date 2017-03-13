@@ -3,7 +3,6 @@ module decoder(
     input logic [5:0] Funct,
     input logic [3:0] Rd,
 	input logic [1:0] Op2,
-	input logic [11:0] Src2,
 	output logic [3:0] be,
     output logic [1:0] FlagW,
     output logic PCS, RegW, MemW,

@@ -7,7 +7,7 @@ module controller(
     output logic [1:0] ImmSrc,
     output logic ALUSrc,
 	output logic ShifterSrc,
-    output logic [1:0] ALUControl,
+    output logic [3:0] ALUControl,
     output logic MemWrite, MemtoReg,
     output logic PCSrc,
 	output logic[3:0] be);
