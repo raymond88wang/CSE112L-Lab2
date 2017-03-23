@@ -6,8 +6,10 @@ module ram(
 	input logic [31:0] dataI ,
 	output logic [31:0] dataO);
 	
-	logic [31:0] RAM[63:0];
+	logic [31:0] RAM[512:0];
 	logic [31:0] dataInMem;
+	
+	assign dataInMem = RAM[addr[31:2]]; // word aligned
 	
 	always_comb
 		begin
@@ -20,19 +22,19 @@ module ram(
 								case(addr[1:0])
 									2'b00:
 										begin
-											dataO = {{24{1'b0}}, dataO[7:0]};
+											dataO = {{24{1'b0}}, dataInMem[7:0]};
 										end
 									2'b01:
 										begin
-											dataO = {{24{1'b0}}, dataO[15:8]};
+											dataO = {{24{1'b0}}, dataInMem[15:8]};
 										end
 									2'b10:
 										begin
-											dataO = {{24{1'b0}}, dataO[23:16]};
+											dataO = {{24{1'b0}}, dataInMem[23:16]};
 										end
 									2'b11:
 										begin
-											dataO = {{24{1'b0}}, dataO[31:24]};
+											dataO = {{24{1'b0}}, dataInMem[31:24]};
 										end
 								endcase
 							end
@@ -42,11 +44,11 @@ module ram(
 								case(addr[1:0])
 									2'b00:
 										begin
-											dataO = {{24{1'b0}}, dataO[15:0]};
+											dataO = {{24{1'b0}}, dataInMem[15:0]};
 										end
 									2'b01:
 										begin
-											dataO = {{24{1'b0}}, dataO[31:16]};
+											dataO = {{24{1'b0}}, dataInMem[31:16]};
 										end
 								endcase
 							end
@@ -56,19 +58,19 @@ module ram(
 								case(addr[1:0])
 									2'b00:
 										begin
-											dataO = dataO[7] ? {{24{1'b1}}, dataO[7:0]} : {{24{1'b0}}, dataO[7:0]};
+											dataO = dataInMem[7] ? {{24{1'b1}}, dataInMem[7:0]} : {{24{1'b0}}, dataInMem[7:0]};
 										end
 									2'b01:
 										begin
-											dataO = dataO[15] ? {{24{1'b1}}, dataO[15:8]} : {{24{1'b0}}, dataO[15:8]};
+											dataO = dataInMem[15] ? {{24{1'b1}}, dataInMem[15:8]} : {{24{1'b0}}, dataInMem[15:8]};
 										end
 									2'b10:
 										begin
-											dataO = dataO[23] ? {{24{1'b1}}, dataO[23:16]} : {{24{1'b0}}, dataO[23:16]};
+											dataO = dataInMem[23] ? {{24{1'b1}}, dataInMem[23:16]} : {{24{1'b0}}, dataInMem[23:16]};
 										end
 									2'b11:
 										begin
-											dataO = dataO[31] ? {{24{1'b1}}, dataO[31:24]} : {{24{1'b0}}, dataO[31:24]};
+											dataO = dataInMem[31] ? {{24{1'b1}}, dataInMem[31:24]} : {{24{1'b0}}, dataInMem[31:24]};
 										end
 								endcase
 							end
@@ -78,15 +80,15 @@ module ram(
 								case(addr[1:0])
 									2'b00:
 										begin
-											dataO = dataO[15] ? {{16{1'b1}}, dataO[15:0]} : {{16{1'b0}}, dataO[15:0]};
+											dataO = dataInMem[15] ? {{16{1'b1}}, dataInMem[15:0]} : {{16{1'b0}}, dataInMem[15:0]};
 										end
 									2'b01:
 										begin
-											dataO = dataO[31] ? {{16{1'b1}}, dataO[31:16]} : {{16{1'b0}}, dataO[31:16]};
+											dataO = dataInMem[31] ? {{16{1'b1}}, dataInMem[31:16]} : {{16{1'b0}}, dataInMem[31:16]};
 										end
 								endcase
 							end
-						default: dataO = RAM[addr[31:2]];
+						default: dataO = dataInMem;
 					endcase
 				end
 		end
@@ -94,7 +96,6 @@ module ram(
 	always_ff @(posedge clk)
         if (we) 
 			begin
-				dataInMem <= RAM[addr[31:2]];
 				case(be)
 					4'b0001:
 						begin
