@@ -10,13 +10,14 @@ module controller(
     output logic [3:0] ALUControl,
     output logic MemWrite, MemtoReg,
     output logic PCSrc,
-	output logic[3:0] be);
+	output logic[3:0] be,
+	output logic Branch);
 
     logic [1:0] FlagW;
     logic PCS, RegW, MemW;
 
     decoder dec(Instr[27:26], Instr[25:20], Instr[15:12], Instr[6:5], Instr[1:0],
-        be, FlagW, PCS, RegW, MemW,
+        Branch, be, FlagW, PCS, RegW, MemW,
         MemtoReg, ALUSrc, ShifterSrc, ImmSrc, RegSrc, ALUControl);
     condlogic cl(clk, reset, Instr[31:28], ALUFlags,
         FlagW, PCS, RegW, MemW,

@@ -9,7 +9,7 @@ module ram(
 	logic [31:0] RAM[512:0];
 	logic [31:0] dataInMem;
 	
-	assign dataInMem = RAM[addr[31:2]]; // word aligned
+	assign	dataInMem = RAM[addr[31:2]];
 	
 	always_comb
 		begin
@@ -93,25 +93,27 @@ module ram(
 				end
 		end
 			
-	always_ff @(posedge clk)
-        if (we) 
-			begin
-				case(be[3:2])
-					2'b00:
-						// STRB
-						begin
-							RAM[addr[31:2]] <= {dataInMem[31:8], dataI[7:0]};
-						end
-					2'b01:
-						// STRH
-						begin
-							RAM[addr[31:2]] <= {dataInMem[31:16], dataI[15:0]};
-						end
-					2'b11:
-						// STR
-						begin
-							RAM[addr[31:2]] <= dataI;
-						end
-				endcase
-			end
+	always @ (posedge clk)
+		begin
+			if (we) 
+				begin
+					case(be[3:2])
+						2'b00:
+							// STRB
+							begin
+								RAM[addr[31:2]] <= {dataInMem[31:8], dataI[7:0]};
+							end
+						2'b01:
+							// STRH
+							begin
+								RAM[addr[31:2]] <= {dataInMem[31:16], dataI[15:0]};
+							end
+						2'b11:
+							// STR
+							begin
+								RAM[addr[31:2]] <= dataI;
+							end
+					endcase
+				end
+		end
 endmodule
