@@ -16,7 +16,8 @@ module regfile(
 
 
     always_ff @(posedge clk)
-        if (we3) rf[wa3] <= wd3;
+        if (we3 & (ra1 != 4'b1111)) rf[wa3] <= wd3;
+		else rf[13] <= r14;
 
     assign rd1 = (ra1 == 4'b1111) ? r15 : rf[ra1];
     assign rd2 = (ra2 == 4'b1111) ? r15 : rf[ra2];

@@ -3,6 +3,7 @@ module decoder(
     input logic [5:0] Funct,
     input logic [3:0] Rd,
 	input logic [1:0] Op2,
+	input logic [1:0] ByteSel,
 	output logic [3:0] be,
     output logic [1:0] FlagW,
     output logic PCS, RegW, MemW,
@@ -35,22 +36,22 @@ module decoder(
 								if(~Funct[5])
 									// STRH
 									begin
-										be = 4'b0011;
+										be = 4'b0100;
 									end
 								else
 									// LDRH
 									begin
-										be = 4'b0010;
+										be = {2'b01, ByteSel};
 									end
 							2'b10:
 								// LDRSB
 								begin
-									be = 4'b0100;
+									be = {2'b10, ByteSel};
 								end
 							2'b11:
 								// LDRSH
 								begin
-									be = 4'b1000;
+									be = {2'b11, ByteSel[1], 1'b0};
 								end
 						endcase
 						
@@ -71,7 +72,7 @@ module decoder(
 						Branch = 1'b0;
 						ALUOp = 1'b0;
 						ShifterSrc = 1'b0;
-						be = (Funct[2]) ? 4'b0001 : 4'b0000; // {STRB, LDRB}, {STR, LDR}
+						be = (Funct[2]) ? {2'b00, ByteSel} : 4'b1111; // {STRB, LDRB}, {STR, LDR}
 						
 						ALUControl = 4'b0100; // add for non-DP instructions
 						FlagW = 2'b00; // don't update Flags
@@ -92,6 +93,12 @@ module decoder(
 						
 						ALUControl = 4'b0100; // add for non-DP instructions
 						FlagW = 2'b00; // don't update Flags
+					
+						if(Funct[4])
+							// BL
+							begin
+								RegW = 1'b1;
+							end
 					end
 			endcase
 		end

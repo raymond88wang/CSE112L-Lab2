@@ -15,11 +15,11 @@ module ram(
 		begin
 			if(~we)
 				begin
-					case(be)
-						4'b0001:
+					case(be[3:2])
+						2'b00:
 							// LDRB
 							begin
-								case(addr[1:0])
+								case(be[1:0])
 									2'b00:
 										begin
 											dataO = {{24{1'b0}}, dataInMem[7:0]};
@@ -38,24 +38,22 @@ module ram(
 										end
 								endcase
 							end
-						4'b0010:
+						2'b01:
 							// LDRH
 							begin
-								case(addr[1:0])
-									2'b00:
-										begin
-											dataO = {{24{1'b0}}, dataInMem[15:0]};
-										end
-									2'b01:
-										begin
-											dataO = {{24{1'b0}}, dataInMem[31:16]};
-										end
-								endcase
+								if(be[1])								
+									begin
+										dataO = {{24{1'b0}}, dataInMem[31:16]};
+									end
+								else
+									begin
+										dataO = {{24{1'b0}}, dataInMem[15:0]};
+									end
 							end
-						4'b0100:
+						2'b10:
 							// LDRSB
 							begin
-								case(addr[1:0])
+								case(be[1:0])
 									2'b00:
 										begin
 											dataO = dataInMem[7] ? {{24{1'b1}}, dataInMem[7:0]} : {{24{1'b0}}, dataInMem[7:0]};
@@ -74,21 +72,23 @@ module ram(
 										end
 								endcase
 							end
-						4'b1000:
+						2'b11:
 							// LDRSH
 							begin
-								case(addr[1:0])
-									2'b00:
-										begin
-											dataO = dataInMem[15] ? {{16{1'b1}}, dataInMem[15:0]} : {{16{1'b0}}, dataInMem[15:0]};
-										end
-									2'b01:
-										begin
-											dataO = dataInMem[31] ? {{16{1'b1}}, dataInMem[31:16]} : {{16{1'b0}}, dataInMem[31:16]};
-										end
-								endcase
+								if(be[1])
+									begin
+										dataO = dataInMem[31] ? {{16{1'b1}}, dataInMem[31:16]} : {{16{1'b0}}, dataInMem[31:16]};
+									end
+								else
+									begin
+										dataO = dataInMem[15] ? {{16{1'b1}}, dataInMem[15:0]} : {{16{1'b0}}, dataInMem[15:0]};
+									end
+								if(be[1:0] == 2'b11)
+									// LDR
+									begin
+										dataO = dataInMem;
+									end
 							end
-						default: dataO = dataInMem;
 					endcase
 				end
 		end
@@ -96,14 +96,21 @@ module ram(
 	always_ff @(posedge clk)
         if (we) 
 			begin
-				case(be)
-					4'b0001:
+				case(be[3:2])
+					2'b00:
+						// STRB
 						begin
 							RAM[addr[31:2]] <= {dataInMem[31:8], dataI[7:0]};
 						end
-					4'b0011:
+					2'b01:
+						// STRH
 						begin
 							RAM[addr[31:2]] <= {dataInMem[31:16], dataI[15:0]};
+						end
+					2'b11:
+						// STR
+						begin
+							RAM[addr[31:2]] <= dataI;
 						end
 				endcase
 			end
