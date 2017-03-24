@@ -1,0 +1,173 @@
+
+module condcheck ( Cond, Flags, CondEx );
+  input [3:0] Cond;
+  input [3:0] Flags;
+  output CondEx;
+  wire   n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16,
+         n17;
+  tri   [3:0] Cond;
+  tri   [3:0] Flags;
+
+  INVX0_LVT U2 ( .A(Cond[1]), .Y(n11) );
+  INVX0_LVT U3 ( .A(Cond[2]), .Y(n12) );
+  NAND3X0_LVT U4 ( .A1(Flags[1]), .A2(n12), .A3(n11), .Y(n6) );
+  NAND2X0_LVT U5 ( .A1(n12), .A2(n11), .Y(n3) );
+  INVX0_LVT U6 ( .A(Flags[3]), .Y(n2) );
+  INVX0_LVT U7 ( .A(Flags[0]), .Y(n1) );
+  AO22X1_LVT U8 ( .A1(Flags[3]), .A2(Flags[0]), .A3(n2), .A4(n1), .Y(n7) );
+  NAND2X0_LVT U9 ( .A1(n3), .A2(n7), .Y(n4) );
+  AO22X1_LVT U10 ( .A1(Flags[2]), .A2(n11), .A3(n6), .A4(n4), .Y(n10) );
+  INVX0_LVT U11 ( .A(Cond[0]), .Y(n16) );
+  INVX0_LVT U12 ( .A(n7), .Y(n5) );
+  AOI221X1_LVT U13 ( .A1(n6), .A2(n12), .A3(n6), .A4(n5), .A5(Flags[2]), .Y(n9) );
+  OA221X1_LVT U14 ( .A1(Cond[2]), .A2(n16), .A3(Cond[2]), .A4(n7), .A5(Cond[1]), .Y(n8) );
+  AO221X1_LVT U15 ( .A1(Cond[0]), .A2(n10), .A3(n16), .A4(n9), .A5(n8), .Y(n17) );
+  OA221X1_LVT U16 ( .A1(Cond[2]), .A2(Flags[1]), .A3(n12), .A4(Flags[0]), .A5(
+        Cond[1]), .Y(n14) );
+  OA221X1_LVT U17 ( .A1(Cond[2]), .A2(Flags[2]), .A3(n12), .A4(Flags[3]), .A5(
+        n11), .Y(n13) );
+  OR2X1_LVT U18 ( .A1(n14), .A2(n13), .Y(n15) );
+  MUX41X1_LVT U19 ( .A1(Cond[0]), .A3(n17), .A2(n16), .A4(n17), .S0(Cond[3]), 
+        .S1(n15), .Y(CondEx) );
+endmodule
+
+
+module condlogic ( clk, reset, Cond, ALUFlags, FlagW, PCS, RegW, MemW, PCSrc, 
+        RegWrite, MemWrite );
+  input [3:0] Cond;
+  input [3:0] ALUFlags;
+  input [1:0] FlagW;
+  input clk, reset, PCS, RegW, MemW;
+  output PCSrc, RegWrite, MemWrite;
+  wire   CondEx;
+  tri   clk;
+  tri   reset;
+  tri   [3:0] Cond;
+  tri   [3:0] ALUFlags;
+  tri   [1:0] FlagW;
+  tri   PCS;
+  tri   RegW;
+  tri   MemW;
+  tri   PCSrc;
+  tri   RegWrite;
+  tri   MemWrite;
+  tri   [1:0] FlagWrite;
+  tri   [3:0] Flags;
+
+  flopenr flagreg1 ( .p1(clk), .p2(reset), .p3(FlagWrite[1]), .p4(
+        ALUFlags[3:2]), .p5(Flags[3:2]) );
+  flopenr flagreg0 ( .p1(clk), .p2(reset), .p3(FlagWrite[0]), .p4(
+        ALUFlags[1:0]), .p5(Flags[1:0]) );
+  condcheck cc ( .Cond(Cond), .Flags(Flags), .CondEx(CondEx) );
+  AND2X1_LVT U4 ( .A1(FlagW[1]), .A2(CondEx), .Y(FlagWrite[1]) );
+  AND2X1_LVT U5 ( .A1(FlagW[0]), .A2(CondEx), .Y(FlagWrite[0]) );
+  AND2X1_LVT U1 ( .A1(CondEx), .A2(RegW), .Y(RegWrite) );
+  AND2X1_LVT U2 ( .A1(CondEx), .A2(MemW), .Y(MemWrite) );
+  AND2X1_LVT U3 ( .A1(CondEx), .A2(PCS), .Y(PCSrc) );
+endmodule
+
+
+module controller ( clk, reset, Instr, ALUFlags, RegSrc, RegWrite, ImmSrc, 
+        ALUSrc, ShifterSrc, ALUControl, MemWrite, MemtoReg, PCSrc, be, Branch
+ );
+  input [31:0] Instr;
+  input [3:0] ALUFlags;
+  output [1:0] RegSrc;
+  output [1:0] ImmSrc;
+  output [3:0] ALUControl;
+  output [3:0] be;
+  input clk, reset;
+  output RegWrite, ALUSrc, ShifterSrc, MemWrite, MemtoReg, PCSrc, Branch;
+
+  tri   clk;
+  tri   reset;
+  tri   \Instr[31] ;
+  tri   \Instr[30] ;
+  tri   \Instr[29] ;
+  tri   \Instr[28] ;
+  tri   \Instr[27] ;
+  tri   \Instr[26] ;
+  tri   \Instr[25] ;
+  tri   \Instr[24] ;
+  tri   \Instr[23] ;
+  tri   \Instr[22] ;
+  tri   \Instr[21] ;
+  tri   \Instr[20] ;
+  tri   \Instr[15] ;
+  tri   \Instr[14] ;
+  tri   \Instr[13] ;
+  tri   \Instr[12] ;
+  tri   \Instr[6] ;
+  tri   \Instr[5] ;
+  tri   \Instr[1] ;
+  tri   \Instr[0] ;
+  tri   [3:0] ALUFlags;
+  tri   [1:0] RegSrc;
+  tri   RegWrite;
+  tri   [1:0] ImmSrc;
+  tri   ALUSrc;
+  tri   ShifterSrc;
+  tri   [3:0] ALUControl;
+  tri   MemWrite;
+  tri   MemtoReg;
+  tri   PCSrc;
+  tri   [3:0] be;
+  tri   Branch;
+  tri   [1:0] FlagW;
+  tri   PCS;
+  tri   RegW;
+  tri   MemW;
+
+  decoder dec ( .p1(Instr[27:26]), .p2(Instr[25:20]), .p3(Instr[15:12]), .p4(
+        Instr[6:5]), .p5(Instr[1:0]), .p6(Branch), .p7(be), .p8(FlagW), .p9(
+        PCS), .p10(RegW), .p11(MemW), .p12(MemtoReg), .p13(ALUSrc), .p14(
+        ShifterSrc), .p15(ImmSrc), .p16(RegSrc), .p17(ALUControl) );
+  condlogic cl ( .clk(clk), .reset(reset), .Cond(Instr[31:28]), .ALUFlags(
+        ALUFlags), .FlagW(FlagW), .PCS(PCS), .RegW(RegW), .MemW(MemW), .PCSrc(
+        PCSrc), .RegWrite(RegWrite), .MemWrite(MemWrite) );
+endmodule
+
+
+module arm ( clk, reset, PC, Instr, MemWrite, be, ALUResult, WriteData, 
+        ReadData );
+  output [31:0] PC;
+  input [31:0] Instr;
+  output [3:0] be;
+  output [31:0] ALUResult;
+  output [31:0] WriteData;
+  input [31:0] ReadData;
+  input clk, reset;
+  output MemWrite;
+
+  tri   clk;
+  tri   reset;
+  tri   [31:0] PC;
+  tri   [31:0] Instr;
+  tri   MemWrite;
+  tri   [3:0] be;
+  tri   [31:0] ALUResult;
+  tri   [31:0] WriteData;
+  tri   [31:0] ReadData;
+  tri   [3:0] ALUFlags;
+  tri   [1:0] RegSrc;
+  tri   RegWrite;
+  tri   [1:0] ImmSrc;
+  tri   ALUSrc;
+  tri   ShifterSrc;
+  tri   [3:0] ALUControl;
+  tri   MemtoReg;
+  tri   PCSrc;
+  tri   Branch;
+
+  controller c ( .clk(clk), .reset(reset), .Instr({Instr[31:20], 1'b0, 1'b0, 
+        1'b0, 1'b0, Instr[15:12], 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, Instr[6:5], 
+        1'b0, 1'b0, 1'b0, Instr[1:0]}), .ALUFlags(ALUFlags), .RegSrc(RegSrc), 
+        .RegWrite(RegWrite), .ImmSrc(ImmSrc), .ALUSrc(ALUSrc), .ShifterSrc(
+        ShifterSrc), .ALUControl(ALUControl), .MemWrite(MemWrite), .MemtoReg(
+        MemtoReg), .PCSrc(PCSrc), .be(be), .Branch(Branch) );
+  datapath dp ( .p1(clk), .p2(reset), .p3(RegSrc), .p4(RegWrite), .p5(ImmSrc), 
+        .p6(ALUSrc), .p7(ShifterSrc), .p8(ALUControl), .p9(MemtoReg), .p10(
+        PCSrc), .p11(MemWrite), .p12(Branch), .p13(ALUFlags), .p14(PC), .p15(
+        Instr), .p16(ALUResult), .p17(WriteData), .p18(ReadData) );
+endmodule
+

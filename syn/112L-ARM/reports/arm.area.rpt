@@ -1,0 +1,59 @@
+Warning: duplicate option '-nosplit' overrides previous value. (CMD-018)
+Warning: Design 'arm' has '3' unresolved references. For more detailed information, use the "link" command. (UID-341)
+ 
+****************************************
+Report : area
+Design : arm
+Version: J-2014.09-SP4
+Date   : Fri Mar 24 13:42:19 2017
+****************************************
+
+Library(s) Used:
+
+    saed32lvt_tt1p05vn40c (File: /users/ugrad2/2012/spring/pooriam/libraries/saed32lvt_tt1p05vn40c.db)
+
+Number of ports:                          167
+Number of nets:                           197
+Number of cells:                            2
+Number of combinational cells:              0
+Number of sequential cells:                 1
+Number of macros/black boxes:               0
+Number of buf/inv:                          0
+Number of references:                       2
+
+Combinational area:                 51.082944
+Buf/Inv area:                        7.624320
+Noncombinational area:               0.000000
+Macro/Black Box area:                0.000000
+Net Interconnect area:              23.897345
+
+Total cell area:                    51.082944
+Total area:                         74.980290
+
+Information: This design contains black box (unknown) components. (RPT-8)
+
+The above information was reported from the logical library. The following are from the physical library:
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area          Local cell area
+                                  ------------------  --------------------------- 
+Hierarchical cell                 Absolute   Percent  Combi-    Noncombi-  Black-
+                                  Total      Total    national  national   boxes   Design
+--------------------------------  ---------  -------  --------  ---------  ------  ----------
+arm                                 51.0829    100.0    0.0000     0.0000  0.0000  arm
+c                                   51.0829    100.0    0.0000     0.0000  0.0000  controller
+c/cl                                51.0829    100.0   10.1658     0.0000  0.0000  condlogic
+c/cl/cc                             40.9172     80.1   40.9172     0.0000  0.0000  condcheck
+--------------------------------  ---------  -------  --------  ---------  ------  ----------
+Total                                                  51.0829     0.0000  0.0000
+
+
+Area of detected synthetic parts
+--------------------------------
+  No DW parts to report!
+
+Total synthetic cell area:              0.0000  0.0%  
+
+1
