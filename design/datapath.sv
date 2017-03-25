@@ -30,7 +30,7 @@ module datapath(
     adder #(32) pcadd1(1'b0, PC, 32'b100, PCPlus4);
     adder #(32) pcadd2(1'b0, PCPlus4, 32'b100, PCPlus8);
 	adder #(32) bladd(InstrOut[24],PCPlus8, 32'b100, PCPlus8Minus4);
-	IFregfile IFrf(InstrIn, IDResult, InstrOut, ResultToPC);
+	//IFregfile IFrf(InstrIn, IDResult, InstrOut, ResultToPC);
 
     // register file logic
     mux2 #(4) ra1mux(InstrOut[19:16], 4'b1111, RegSrc[0], RA1);
@@ -41,17 +41,17 @@ module datapath(
     mux2 #(32) resmux(ALUResult, ReadData, MemtoReg, Result);
     extend ext(InstrOut[23:0], ImmSrc, ExtImm);
 	shifter shifter(InstrOut[25:0], WriteData, Rs, Rd, ShifterFlags);
-	IDregfile IDrf(SrcA, WriteData, ExtImm, EXEResult, SrcAE, SrcBE, ExtImmE, IDResult);
+	//IDregfile IDrf(SrcA, WriteData, ExtImm, EXEResult, SrcAE, SrcBE, ExtImmE, IDResult);
 
     // ALU logic
     mux2 #(32) srcbmux(Rd, ExtImm, ALUSrc, SrcB);
     alu alu(SrcA, SrcB, ALUControl, ALUResult, AFlags);
 	mux2 #(4) flagsmux(ShifterFlags, AFlags, ShifterSrc, ALUFlags);
-	EXEregfile EXErf(ALUResult, WriteData, MEMResult, ALUResultE, WriteDataE, EXEResult);
+	//EXEregfile EXErf(ALUResult, WriteData, MEMResult, ALUResultE, WriteDataE, EXEResult);
 	
 	mux2 #(32) resultmux(ReadDataW, ALUResult, MemtoReg, dmemResult);
 	
 	immshift branchshift(4'b0010, 2'b00, ALUResult, BranchResult, 4'b0000);
 	mux2 #(32) branchmux(Result, BranchResult, Branch, Result);
-	EXEregfile EXErf(ReadData, ALUResultE, Result, ReadDataW, ALUOutW, MEMResult);
+	//EXEregfile EXErf(ReadData, ALUResultE, Result, ReadDataW, ALUOutW, MEMResult);
 endmodule
