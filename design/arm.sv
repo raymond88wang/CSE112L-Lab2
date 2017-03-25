@@ -12,7 +12,7 @@ module arm(
     logic [1:0] RegSrc, ImmSrc;
 	logic [3:0] ALUControl;
 
-    controller c(clk, reset, Instr[31:0], ALUFlags,
+    controller c(clk, reset, Instr, ALUFlags,
         RegSrc, RegWrite, ImmSrc,
         ALUSrc, ShifterSrc, ALUControl,
         MemWrite, MemtoReg, PCSrc, be, Branch);
@@ -20,7 +20,7 @@ module arm(
         RegSrc, RegWrite, ImmSrc,
         ALUSrc, ShifterSrc, ALUControl,
         MemtoReg, PCSrc, MemWrite, Branch,
-        ALUFlags, PC, Instr[31:0],
+        ALUFlags, PC, Instr,
         ALUResult, WriteData, ReadData);
 
 endmodule

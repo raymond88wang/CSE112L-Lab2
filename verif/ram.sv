@@ -9,7 +9,10 @@ module ram(
 	logic [31:0] RAM[512:0];
 	logic [31:0] dataInMem;
 	
-	assign	dataInMem = RAM[addr[31:2]];
+	always @ (negedge clk)
+		begin
+			dataInMem[31:0] <= RAM[addr[31:2]];
+		end
 	
 	always_comb
 		begin

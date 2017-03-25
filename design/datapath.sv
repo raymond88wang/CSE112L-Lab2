@@ -17,7 +17,7 @@ module datapath(
     input logic [31:0] ReadData);
 
 
-    logic [31:0] PCNext, PCPlus4, PCPlus8, InstrOut;
+    logic [31:0] PCNext, PCPlus4, PCPlus8;
     logic [31:0] ExtImm, SrcA, SrcB, Rd, Rs, BranchResult;
 	logic [31:0] Result, MEMResult, EXEResult, IDResult, ResultToPc;
     logic [3:0] RA1, RA2, ShifterFlags, AFlags, BranchFlags;
