@@ -23,7 +23,7 @@ module decoder(
 					begin
 						RegSrc = Funct[0] ? 2'b00 : 2'b10; // {LDRH, LDRSB, LDRSH} : STRH
 						ImmSrc = 2'b00;
-						ALUSrc = Funct[2] // Immediate : Register
+						ALUSrc = Funct[2]; // Immediate : Register
 						MemtoReg = 1'b0;
 						RegW = Funct[0]; // {LDRH, LDRSB, LDRSH} : STRH
 						MemW = ~Funct[0]; // {LDRH, LDRSB, LDRSH} : STRH
