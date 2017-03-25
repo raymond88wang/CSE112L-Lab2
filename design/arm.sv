@@ -20,7 +20,7 @@ module arm(
         RegSrc, RegWrite, ImmSrc,
         ALUSrc, ShifterSrc, ALUControl,
         MemtoReg, PCSrc, MemWrite, Branch,
-        ALUFlags, PC, Instr,
+        ALUFlags, PC, Instr[31:0],
         ALUResult, WriteData, ReadData);
 
 endmodule
