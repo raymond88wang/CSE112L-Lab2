@@ -15,7 +15,7 @@ module arm(
     controller c(clk, reset, Instr[31:0], ALUFlags,
         RegSrc, RegWrite, ImmSrc,
         ALUSrc, ShifterSrc, ALUControl,
-        MemWrite, MemtoReg, PCSrc, be);
+        MemWrite, MemtoReg, PCSrc, be, Branch);
     datapath dp(clk, reset,
         RegSrc, RegWrite, ImmSrc,
         ALUSrc, ShifterSrc, ALUControl,
