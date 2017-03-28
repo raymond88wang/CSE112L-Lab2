@@ -4,6 +4,7 @@ module decoder(
     input logic [3:0] Rd,
 	input logic [1:0] Op2,
 	input logic [1:0] ByteSel,
+	input logic [1:0] isMem,
 	output logic Branch,
 	output logic [3:0] be,
     output logic [1:0] FlagW,
@@ -23,7 +24,7 @@ module decoder(
 					begin
 						RegSrc = 2'b10;
 						ImmSrc = 2'b00;
-						ALUSrc = Funct[2]; // Immediate : Register
+						ALUSrc = Funct[5]; // Immediate : Register
 						MemtoReg = 1'b0;
 						RegW = 1'b1; // {LDRH, LDRSB, LDRSH} : STRH
 						MemW = 1'b0; // {LDRH, LDRSB, LDRSH} : STRH
@@ -33,34 +34,38 @@ module decoder(
 						ALUControl = Funct[4:1];
 						be = 4'bx;
 						
-						case(Op2)
-							2'b01:
-								if(~Funct[5])
-									// STRH
-									begin
-										be = 4'b0100;
-										RegW = 1'b0;
-										MemW = 1'b1;
-									end
-								else
-									// LDRH
-									begin
-										be = {2'b01, ByteSel};
-										MemtoReg = 1'b1;
-									end
-							2'b10:
-								// LDRSB
-								begin
-									be = (Funct[4:1] == 4'b1101) ? 4'bx : {2'b10, ByteSel};
-									MemtoReg = 1'b1;
-								end
-							2'b11:
-								// LDRSH
-								begin
-									be = {2'b11, ByteSel[1], 1'b0};
-									MemtoReg = 1'b1;
-								end
-						endcase
+						if(~Funct[5] & isMem == 2'b11)
+							begin
+								ALUSrc = Funct[2];
+								case(Op2)
+									2'b01:
+										if(~Funct[0])
+											// STRH
+											begin
+												be = 4'b0100;
+												RegW = 1'b0;
+												MemW = 1'b1;
+											end
+										else
+											// LDRH
+											begin
+												be = {2'b01, ByteSel};
+												MemtoReg = 1'b1;
+											end
+									2'b10:
+										// LDRSB
+										begin
+											be = (Funct[4:1] == 4'b1101) ? 4'bx : {2'b10, ByteSel};
+											MemtoReg = 1'b1;
+										end
+									2'b11:
+										// LDRSH
+										begin
+											be = {2'b11, ByteSel[1], 1'b0};
+											MemtoReg = 1'b1;
+										end
+								endcase
+							end
 						
 						FlagW[1] = Funct[0];
 						FlagW[0] = Funct[0] &
@@ -70,9 +75,9 @@ module decoder(
 					end
 				2'b01:
 					begin
-						RegSrc = Funct[0] ? 2'b00 : 2'b01; // LDR : STR
-						ImmSrc = {2'b0, ~Funct[5]};
-						ALUSrc = ~Funct[5];
+						RegSrc = Funct[0] ? 2'b00 : 2'b10; // LDR : STR
+						ImmSrc = 2'b01;
+						ALUSrc = 1'b1;
 						MemtoReg = 1'b1;
 						RegW = Funct[0]; // LDR : STR
 						MemW = ~Funct[0]; // LDR : STR

@@ -16,7 +16,7 @@ module controller(
     logic [1:0] FlagW;
     logic PCS, RegW, MemW;
 
-    decoder dec(Instr[27:26], Instr[25:20], Instr[15:12], Instr[6:5], Instr[1:0],
+    decoder dec(Instr[27:26], Instr[25:20], Instr[15:12], Instr[6:5], Instr[1:0], {Instr[7],Instr[4]},
         Branch, be, FlagW, PCS, RegW, MemW,
         MemtoReg, ALUSrc, ShifterSrc, ImmSrc, RegSrc, ALUControl);
     condlogic cl(clk, reset, Instr[31:28], ALUFlags,
